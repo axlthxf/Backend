@@ -4,7 +4,8 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const saltRounds = 10;
+const saltRounds = 10
+
 
 
 var mongoose = require('mongoose');
