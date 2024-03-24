@@ -34,18 +34,6 @@ app.listen("3000", () => {
 app.use("/", router)
 router.use(bodyParser.json())
 
-// const users=[
-//     {
-//         id:1,
-//         name:"althaf"
-//     },
-//     {
-//         id:2,
-//         name:"Fabin"
-//     }
-// ]
-
-
 router.post('/signup', (req, res) => {
 
     User.find({ email: req.body.email }).then(
@@ -53,7 +41,6 @@ router.post('/signup', (req, res) => {
             if (usr.length > 0) {
                 res.status(406).send({ "error": "user already exists" })
             } else {
-
                 bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
 
                     var newuser = new User({
@@ -66,10 +53,7 @@ router.post('/signup', (req, res) => {
                     newuser.save().then((doc) => {
                         res.send(doc)
                     })
-
                 });
-
-
             }
         }
     )
@@ -125,7 +109,7 @@ router.post("/addtodo", (req, res) => {
 router.post("/updatetodosstatus", async (req, res) => {
     await User.findOne({ email: req.body.email }).then((usr) => {
         var newone = usr.todos.id(req.body._id)
-        newone.completed =!newone.completed
+        newone.completed = !newone.completed
 
         usr.save().then((doc) => {
             res.send(doc)
@@ -150,12 +134,12 @@ router.post('/edittodos', async (req, res) => {
     })
 })
 
-    router.post('/deletetodo', async (req, res) => {
-        await User.findOne({ email: req.body.email }).then((user) => {
-            var del = user.todos.id(req.body._id)
-            user.todos.pull(del)
-            user.save().then((doc) => {
-                res.send(doc)
-            })
+router.post('/deletetodo', async (req, res) => {
+    await User.findOne({ email: req.body.email }).then((user) => {
+        var del = user.todos.id(req.body._id)
+        user.todos.pull(del)
+        user.save().then((doc) => {
+            res.send(doc)
         })
     })
+})
