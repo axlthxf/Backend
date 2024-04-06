@@ -34,6 +34,8 @@ app.listen("3000", () => {
 app.use("/", router)
 router.use(bodyParser.json())
 
+
+
 router.post('/signup', (req, res) => {
 
     User.find({ email: req.body.email }).then(
@@ -67,22 +69,37 @@ router.post('/signin', async (req, res) => {
 
         bcrypt.compare(req.body.password, usernew[0].password, function (err, result) {
 
-            if (err) console.error(err)
+            if (err){ console.error(err)
+                res.send({
+            "error": "something went wrong"})
+                return;
+            }
 
             console.log(result)
-
-            res.send({
-
-                "username": usernew[0].username,
-                "email": usernew[0].email,
-                "todos": usernew[0].todos,
-            })
+            if(result){
+                
+                res.send(
+                    {
+                        data: {
+    
+                            "username": usernew[0].username,
+                            "email": usernew[0].email,
+                            "todos": usernew[0].todos,
+                        },
+                        msg: "USER SIGNEDIN SUCCESSFULLY"
+                    }
+                )
+            }else{
+                res.send({
+                    "error": "INCORRECT PASSWORD"
+                })
+            }
 
         });
     } else {
 
         console.log("user does not exist")
-        res.status(404).send({ "msg": "user does not exist" })
+        res.status(404).send({ "error": "user does not exist" })
 
     }
 })
@@ -141,5 +158,22 @@ router.post('/deletetodo', async (req, res) => {
         user.save().then((doc) => {
             res.send(doc)
         })
+    })
+})
+
+router.post('/gettodos', async (req, res) => {
+    await User.findOne({ email: req.body.email }).then((user) => {
+        res.send(
+            {
+                data: user.todos,
+                msg: "todos fetched successfully"
+            }
+        )
+
+
+
+
+
+        
     })
 })
